@@ -10,6 +10,7 @@
   "author": "DNV GL",
   "license": "ISC",
   "dependencies": {
+    "azure-storage": "^2.10.3",
     "body-parser": "^1.19.0",
     "express": "^4.16.4",
     "express-session": "^1.16.1",

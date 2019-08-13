@@ -11,9 +11,9 @@
   "author": "DNV GL",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.18.1",
+    "axios": "^0.19.0",
     "core-js": "^3.0.1",
-    "lodash": "^4.17.13",
+    "lodash": "^4.17.15",
     "normalize.css": "^8.0.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",

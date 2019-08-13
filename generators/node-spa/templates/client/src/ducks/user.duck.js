@@ -31,8 +31,12 @@ export const setUser = data => {
 export const setProperties = createAction("SET_USER_PROPERTIES") // Set one or more property values as an object
 export const unsetProperties = createAction("UNSET_USER_PROPERTIES") // Unset properties by defining an array of property names to unset
 
-export const isLoading = state => !!getState(state).loading
+export const isLoading = state => getState(state).loading
 export const setLoading = createAction("SET_IS_LOADING", (flag = true) => flag)
+
+export const hasTriedLogin = createAction("HAS_TRIED_LOGIN", (flag = true) => flag)
+export const getTriedLogin = state => !!getState(state).hasTriedLogin
+
 
 export const fetchUser = () => async (dispatch, getState) => {
 	const state = getState()
@@ -41,7 +45,7 @@ export const fetchUser = () => async (dispatch, getState) => {
 
 	try {
 		const response = await axios({
-			url: "/_api/user"
+			url: "/_api/user",
 		})
 		const data = response.data || {}
 		dispatch(setAuthenticated())
@@ -49,10 +53,13 @@ export const fetchUser = () => async (dispatch, getState) => {
 	} catch (error) {
 		dispatch(setAuthenticated(false))
 		dispatch(unsetProperties(["id", "firstName", "lastName", "email"]))
+
 	} finally {
 		dispatch(setLoading(false))
+		dispatch(hasTriedLogin(true))
 	}
 }
+
 
 export const reducer = handleActions({
 	[setProperties]: (state, { payload }) => ({
@@ -67,6 +74,10 @@ export const reducer = handleActions({
 	[setLoading]: (state, { payload }) => ({
 		...state,
 		loading: payload
+	}),
+	[hasTriedLogin] : (state, { payload }) => ({
+		...state,
+		hasTriedLogin: payload
 	})
-}, {})
+}, { hasTriedLogin: false })
 export default reducer

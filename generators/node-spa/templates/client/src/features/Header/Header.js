@@ -12,6 +12,7 @@ export const Header = ({ isLoggedIn, userInitials }) => (
 		</Link>
 		<nav className={classes.nav}>
 			<NavLink to="/user" activeClassName={classes.active}>User</NavLink>
+			<NavLink to="/containers" activeClassName={classes.active}>Containers</NavLink>
 		</nav>
 		{isLoggedIn && (
 			<Link to="/user" className={classes.user}>

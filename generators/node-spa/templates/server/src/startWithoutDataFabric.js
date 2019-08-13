@@ -3,11 +3,11 @@ const configLoader = require("./config")
 const parseError = require("./utils/parseError")
 
 const setupLogger = require("./init/setupLogging")
-const setupAuthentication = require("./dataFabric/setupAuthAndDataFabric")
+const setupAuthentication = require("./init/setupAuthentication")
 const setupUserApis = require("./init/setupUserApis")
 const setupRoutes = require("./init/setupRoutes")
 const setupServer = require("./init/setupServer")
-const setupDataFabricApi = require("./dataFabric/setupDataFabricApi")
+
 
 const start = async () => {
 	let log = undefined
@@ -35,7 +35,6 @@ const start = async () => {
 		await setupAuthentication(app, config.auth, log)
 
 		setupUserApis(app, config.auth)
-		setupDataFabricApi(app, config.auth)
 		// Do this last as it adds a generic route handler
 		setupRoutes(app, config.server.staticRoot, log)
 

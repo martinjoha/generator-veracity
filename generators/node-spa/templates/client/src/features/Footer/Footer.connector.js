@@ -2,5 +2,5 @@ import { connect } from "react-redux"
 import Footer from "./Footer"
 
 export default connect(() => ({
-	copyrightTo: "<%= companyName || userName %>"
+	copyrightTo: "<= companyName || userName >"
 }))(Footer)

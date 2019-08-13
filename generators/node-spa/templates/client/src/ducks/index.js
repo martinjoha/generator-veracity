@@ -1,6 +1,9 @@
 import { combineReducers } from "redux"
 
 import * as user from "./user.duck"
+import * as blobs from "./blobs.duck"
+import * as blobActions from "./blobs.editors.duck"
+import * as containers from "./containers.duck"
 
 /**
  * This object should contain the default exports from all ducks in our system.
@@ -8,7 +11,10 @@ import * as user from "./user.duck"
  * Add new ducks to this object when they are implemented.
  */
 export const ducks = {
-	user
+	user,
+	blobs,
+	blobActions,
+	containers
 }
 
 /**
