@@ -21,7 +21,7 @@ const authenticatorGet = (req, res, next) => {
 	return passport.authenticate("veracity-oidc-data", { 
 		response: res,
 		failureRedirect: "/error", // Where to route the user if the authentication fails
-		customState: req.query.location || ""
+		customState: req.query.redirectTo || ""
 	})(req, res, next)
 }
 

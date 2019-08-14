@@ -34,7 +34,7 @@ export const unsetProperties = createAction("UNSET_USER_PROPERTIES") // Unset pr
 export const isLoading = state => getState(state).loading
 export const setLoading = createAction("SET_IS_LOADING", (flag = true) => flag)
 
-export const hasTriedLogin = createAction("HAS_TRIED_LOGIN", (flag = true) => flag)
+export const setTriedLogin = createAction("SET_TRIED_LOGIN", (flag = true) => flag)
 export const getTriedLogin = state => !!getState(state).hasTriedLogin
 
 
@@ -53,10 +53,8 @@ export const fetchUser = () => async (dispatch, getState) => {
 	} catch (error) {
 		dispatch(setAuthenticated(false))
 		dispatch(unsetProperties(["id", "firstName", "lastName", "email"]))
-
 	} finally {
 		dispatch(setLoading(false))
-		dispatch(hasTriedLogin(true))
 	}
 }
 
@@ -75,9 +73,6 @@ export const reducer = handleActions({
 		...state,
 		loading: payload
 	}),
-	[hasTriedLogin] : (state, { payload }) => ({
-		...state,
-		hasTriedLogin: payload
-	})
-}, { hasTriedLogin: false })
+
+}, { })
 export default reducer

@@ -13,11 +13,10 @@ class ContainerBlobs extends Component {
 	}
 
   createBlob = async () => {
-  	const { container } = this.props 
   	const { newBlobName, newBlobText } = this.state
-  	await this.props.createBlob(newBlobName, newBlobText, container.reference, "text/plain")
+  	await this.props.createBlob(newBlobName, newBlobText, "text/plain")
   	if(this.props.blobCreated) {
-  		this.props.fetchContent(this.props.container)
+  		this.props.fetchContent()
   		this.setState({
   			newBlobName: "",
   			newBlobText: ""
@@ -26,10 +25,9 @@ class ContainerBlobs extends Component {
   }
 
 	deleteBlob = async (blobName) => {
-		const { container } = this.props
-		await this.props.deleteBlob(container.reference, blobName)
+		await this.props.deleteBlob(blobName)
 		if(this.props.blobDeleted) {
-			this.props.fetchContent(container)
+			this.props.fetchContent()
 		}
 	}
 
@@ -43,7 +41,7 @@ class ContainerBlobs extends Component {
 		this.props.blobs.map(blob => {
 			return(
 				<div className={classes.blob} key={blob.name}>
-					<Link to={`/containers/${this.props.containerId}/blob/${blob.name}`}>
+					<Link to={`/containers/${this.props.match.params.id}/blob/${blob.name}`}>
 						<h3 key={blob.name}>Blob name: {blob.name}</h3>
 					</Link>
 					<div>
@@ -70,25 +68,14 @@ class ContainerBlobs extends Component {
 		if(this.props.errorMessage) {
 			return (
 				<div className={classes.container}>
-					<div className={classes.blob}>
-						<h3>{this.props.errorMessage}</h3>
-						<Link to="/containers">Back to containers</Link>	
-					</div>
+					<h3>{this.props.errorMessage}</h3>
+					<Link to="/containers">Back to containers</Link>	
 				</div>
 			)
 		}
 
-		if(!this.props.container && this.props.containersFetched) {
-			return (
-				<div className={classes.container}>
-					<p>No containers with id {this.props.containerId}</p>
-					<Link to="/containers" >Back to containers</Link>
-				</div>
-			)
-		}
-
-		if(this.props.blobs.length === 0 && !this.props.blobsFetched) {
-			this.props.fetchContent(this.props.container)
+		if(!this.props.blobsFetched) {
+			this.props.fetchContent()
 			return (
 				<div className={classes.container}>Loading...</div>
 			)
@@ -96,24 +83,26 @@ class ContainerBlobs extends Component {
 
 		return (
 			<div className={classes.container}>
+				<Link to="/containers">Back to containers</Link>
 				{this.props.blobs.length > 0 ? 
 					this.renderBlobs() : <h3>There are no blobs in this container</h3>}
 				{this.renderCreateForm()}
+
+
+
 			</div>
 		)
 	}
 }
 
 ContainerBlobs.propTypes = {
-	containersFetched: PropTypes.bool,
 	blobs: PropTypes.array,
 	blobCreated: PropTypes.bool,
 	blobDeleted: PropTypes.bool,
 	containerId: PropTypes.string,
-	currentContainer: PropTypes.string,
-	container: PropTypes.object,
 	errorMessage: PropTypes.string,
 	blobsFetched: PropTypes.bool,
+	match: PropTypes.object,
 
 	fetchContent: PropTypes.func,
 	createBlob: PropTypes.func,

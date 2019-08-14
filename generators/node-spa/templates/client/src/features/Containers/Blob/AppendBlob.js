@@ -18,7 +18,7 @@ class AppendBlob extends Component {
 		const { containerName, blob } = this.props
 		await this.props.appendToBlob(containerName, blob.name, this.state.appendText)
 		if(this.props.blobChanged){
-			this.props.fetchBlob(containerName, blob.name)
+			this.props.fetchContent(blob)
 			this.setState({ appendText: "" })
 		}
 	}
@@ -57,7 +57,7 @@ AppendBlob.propTypes = {
 	blobName: PropTypes.string,
 	blobChanged: PropTypes.bool,
 
-	fetchBlob: PropTypes.func,
+	fetchContent: PropTypes.func,
 	appendToBlob: PropTypes.func
 }
 

@@ -10,8 +10,14 @@ const compose = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || reduxCompose
  * @param {object} [initialState} The initial state of the store
  * @returns A new store object that supports the Redux DevTools extension
  */
+
 export const newStore = (initialState = {}) => {
-	return createStore(rootReducer(), initialState, compose(
+	const initialStateElement = document.getElementById("initialState")
+	let initState = {}
+	if(initialStateElement) {
+		initState = JSON.parse(initialStateElement.innerHTML || "{}")
+	}
+	return createStore(rootReducer(), initState, compose(
 		applyMiddleware(thunk)
 	))
 }

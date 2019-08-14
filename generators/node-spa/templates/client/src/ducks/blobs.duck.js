@@ -14,7 +14,7 @@ export const isLoading = state => getState(state).loading
 export const setGlobalErrorMessage = createAction("SET_GLOBAL_ERROR_MESSAGE")
 export const getGlobalErrorMessage = state => getState(state).errorMessage
 export const setLocalErrorMessage = createAction("SET_LOCAL_ERROR_MESSAGE")
-export const getLocalErrorMessage = (state, blobName) => getBlobs(state).filter(blob => blob.name === blobName)[0].errorMessage || null
+export const getLocalErrorMessage = (state, blobName) => getBlobByName(state, blobName).errorMessage || null
 
 
 export const setCurrentContainer = createAction("SET_CURRENT_CONTAINER")
@@ -25,7 +25,7 @@ export const unsetBlobs = createAction("UNSET_BLOBS")
 export const setBlobsFetched = createAction("SET_BLOBS_FETCHED")
 
 export const getBlobsFetched = state => !!getState(state).blobsFetched
-export const fetchBlobs = (containerId, containerName) => async (dispatch, getState) => {
+export const fetchBlobs = (containerId) => async (dispatch, getState) => {
 	const state = getState()
 	if(isLoading(state)) return 
 	dispatch(setLoading())
@@ -35,7 +35,6 @@ export const fetchBlobs = (containerId, containerName) => async (dispatch, getSt
 			url: "/_api/container/listblobs",
 			headers: {
 				id: containerId,
-				containerName
 			}
 		})
 		const data = response.data || []
@@ -47,6 +46,30 @@ export const fetchBlobs = (containerId, containerName) => async (dispatch, getSt
 	} finally {
 		dispatch(setBlobsFetched(true))
 	}
+}
+
+export const setSingleBlob = createAction("SET_SINGLE_BLOB")
+export const fetchBlobProperties = (containerId, blobName) => async (dispatch, getState) => {
+	const state = getState()
+	if(isLoading(state)) return 
+	dispatch(setLoading())
+
+	try {
+		const response = await axios({
+			url: "/_api/container/blobproperties",
+			headers: {
+				blobName,
+				id: containerId
+			}
+		})
+		const data = response.data || {}
+		console.log(data)
+		dispatch(setSingleBlob(data))
+	} catch (error) {
+		console.log(error.response.data)
+		dispatch(setSingleBlob(error.response.data))
+	}
+
 }
 
 export const setBlobContent = createAction("SET_BLOB_CONTENT")
@@ -63,53 +86,40 @@ const updateArray = (blobs, blobName, key, data) => {
 	})
 }
 
-export const fetchAppendBlob = (containerName, blobName) => async (dispatch, getState) => {
+export const fetchAppendBlob = (containerId, blobName) => async (dispatch, getState) => {
 	const state = getState()
 	const blobs = getBlobs(state)
 	if (isLoading(state)) return
 	dispatch(setLoading())
 	try {
 		const response = await axios({
-			url: "/_api/container/blobdetails",
+			url: "/_api/container/blobcontent",
 			headers: {
-				containerName,
-				blobName
+				blobName,
+				id: containerId
 			}
 		})
 		const data = response.data || ""
 		const newBlobs = updateArray(blobs, blobName, "content", data)
+		console.log(newBlobs)
 		dispatch(setBlobContent(newBlobs))
 	} catch(error) {
+		console.log(error)
 		return dispatch(setLocalErrorMessage({ message: error.response.data.message, blobName }))
 	} 
 }
 
-export const fetchImageBlob = (containerName, blobName) => async (dispatch, getState) => {
-	const state = getState()
-	const blobs = getBlobs(state)
-	if (isLoading(state)) return
-	dispatch(setLoading())
-	try {
-		const response = await axios({
-			url: "/_api/container/imageblob",
-			headers: {
-				containerName,
-				blobName
-			}
-		})
-		const data = response.data
-		const newBlobs = updateArray(blobs, blobName, "content", data)
-		dispatch(setBlobContent(newBlobs))
-	} catch(error) {
-		return dispatch(setLocalErrorMessage({ message: error.response.data.message, blobName }))	
-	}
-}
 
 export const reducer = handleActions({
 	[setBlobs]: (state, { payload }) => ({
 		...state,
 		blobs: [...payload.data],
 		loading: false,
+	}),
+	[setSingleBlob]: (state, { payload }) => ({
+		...state,
+		blobs: [...payload],
+		loading: false
 	}),
 	[setLoading]: ((state, { payload }) => ({
 		...state,
@@ -143,6 +153,6 @@ export const reducer = handleActions({
 		errorMessage: null,
 		blobsFetched: false,
 	})
-}, { blobs: null, errorMessage: null })
+}, { })
 
 export default reducer

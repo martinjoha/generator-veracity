@@ -14,13 +14,12 @@ export const getErrorMessage = state => getState(state).errorMessage
 
 export const blobDeleted = createAction("BLOB_DELETED_SUCCESS", (flag = true) => flag)
 export const getBlobDeleted = state => getState(state).blobDeleted
-export const deleteBlob = (containerName, blobName) => async dispatch => {
+export const deleteBlob = (blobName) => async dispatch => {
 	dispatch(blobDeleted(false))
 	try {
 		await axios({
 			url: "/_api/container/deleteblob",
 			headers: {
-				containerName,
 				blobName,
 			}
 		})
@@ -32,7 +31,7 @@ export const deleteBlob = (containerName, blobName) => async dispatch => {
 
 export const blobCreated = createAction("BLOB_CREATED_SUCCESS", (flag = true) => flag)
 export const getBlobCreated = (state) => !!getState(state).blobCreated
-export const createBlob = (blobName, blobText, containerName, contentType) => async (dispatch) => {
+export const createBlob = (blobName, blobText, contentType) => async (dispatch) => {
 	const parsedText = createAppendText(blobText)
 	dispatch(blobCreated(false))
 	try {
@@ -41,7 +40,6 @@ export const createBlob = (blobName, blobText, containerName, contentType) => as
 			headers: {
 				blobName,
 				blobText: parsedText,
-				containerName,
 				contentType
 			}
 		})

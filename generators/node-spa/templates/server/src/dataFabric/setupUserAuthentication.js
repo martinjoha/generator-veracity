@@ -40,7 +40,7 @@ const authenticatorGet = (req, res, next) => {
 	return passport.authenticate("veracity-oidc", { 
 		response: res,
 		failureRedirect: "/error", // Where to route the user if the authentication fails
-		customState: "/" + (req.query.location || "")
+		customState: "/" + (req.query.redirectTo || "")
 	})(req, res, next)
 }
 
@@ -73,7 +73,7 @@ module.exports = {
 		// To perform the necessary steps it needs to parse post data as well as sign in correctly. This is done using the body-parser middleware.
 		// Make sure the url is one of the urls from your developer.veracity.com links
 		app.post("/signin-oidc", bodyParser.urlencoded({ extended: true }), authenticatorPost, (req, res) => {
-			res.redirect("/login-data?location=" + req.body.state)
+			res.redirect("/login-data?redirectTo=" + req.body.state)
 		})
 	},
 }

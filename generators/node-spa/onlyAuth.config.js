@@ -1,7 +1,8 @@
 module.exports = [
 	"**/Containers/**", 
 	"**/containers.duck.js", 
-	"**/blobs.duck.js", 
+	"**/blobs.duck.js",
+	"**/blobs.editors.duck.js", 
 	"**/dataFabric/**", 
 	"**/ducks.index.js", 
 	"**/reducerWithOnlyAuth.js", 
@@ -11,4 +12,9 @@ module.exports = [
 	"**/start.js",
 	"**/routesWithoutDataFabric.js",
 	"**/routes.js",
+	"**/client/utils",
+	"**/checkContainerMiddleware.js",
+	"**/routes.connector.js",
+	"**/routes/index.js",
+	"**/routes/indexWithoutDataFabric.js"
 ]

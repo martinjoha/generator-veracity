@@ -105,6 +105,10 @@ It is adviced to go through the documentation before starting the application.
 					this.templatePath("./server/src/startWithoutDataFabric.js"),
 					this.destinationPath("./server/src/start.js")
 				)
+				this.fs.copy(
+					this.templatePath("./client/src/routes/indexWithoutDataFabric.js"),
+					this.destinationPath("./client/src/routes/index.js")
+				)
 			
 			}
 		}
