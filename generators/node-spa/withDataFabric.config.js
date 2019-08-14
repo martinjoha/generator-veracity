@@ -1,5 +1,5 @@
 module.exports = [
-	"**/HeaderWithoutContainer.js",
+	"**/HeaderWithoutDatafabric.js",
 	"**/startWithoutDataFabric.js",
 	"**/routesWithoutDataFabric.js",
 	"**/setupAuthentication.js",

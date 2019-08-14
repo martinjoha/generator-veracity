@@ -7,10 +7,8 @@ const _ns = "@blobActions/"
 export const getState = globalState => globalState.blobActions || {}
 const createAction = (action, payload) => createReduxAction(_ns + action, payload)
 
-
 export const setErrorMessage = createAction("SET_ERROR_MESSAGE")
 export const getErrorMessage = state => getState(state).errorMessage
-
 
 export const blobDeleted = createAction("BLOB_DELETED_SUCCESS", (flag = true) => flag)
 export const getBlobDeleted = state => getState(state).blobDeleted
@@ -50,28 +48,6 @@ export const createBlob = (blobName, blobText, contentType) => async (dispatch) 
 	}
 }
 
-
-export const blobChanged = createAction("BLOB_CHANGED", (flag = true) => flag)
-export const getBlobChanged = state => !!getState(state).blobChanged
-export const appendToBlob = (containerName, blobName, text) => async (dispatch) => { 
-	const parsedText = createAppendText(text)
-	try {
-		await axios({
-			method: "POST",
-			url: "/_api/container/appendtoblob",
-			headers: {
-				containerName,
-				blobName,
-				text: parsedText
-			}
-		})
-		return dispatch(blobChanged())
-	} catch (error) {
-		return dispatch(setErrorMessage({ message: error.response.data.message, blobName }))
-	}
-}
-
-
 export const reducer = handleActions({
 	[blobCreated]: (state, { payload }) => ({
 		...state,
@@ -85,10 +61,6 @@ export const reducer = handleActions({
 		...state,
 		errorMessage: payload
 	}),
-	[blobChanged]: (state, { payload }) => ({
-		...state,
-		blobChanged: payload
-	})
 }, {}) 
 
 export default reducer

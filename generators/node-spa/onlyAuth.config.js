@@ -7,7 +7,7 @@ module.exports = [
 	"**/ducks.index.js", 
 	"**/reducerWithOnlyAuth.js", 
 	"**/Header.js", 
-	"**/HeaderWithoutContainer.js",
+	"**/HeaderWithoutDatafabric.js",
 	"**/startWithoutDataFabric.js",
 	"**/start.js",
 	"**/routesWithoutDataFabric.js",

@@ -5,7 +5,6 @@ const azure = require("azure-storage")
 const notAuthMiddleware = require("../utils/notAuthMiddleware")
 const checkContainerMiddleware = require("../utils/checkContainerMiddleware")
 const promiseRouteHandler = require("../utils/promiseRouteHandler")
-const parseBlobs = require("../utils/parseBlobs")
 
 module.exports = (app, config) => {
   
@@ -29,6 +28,8 @@ module.exports = (app, config) => {
 		}
 	}))
 
+
+	
 	app.get("/_api/container/listblobs", notAuthMiddleware, checkContainerMiddleware(config), promiseRouteHandler( async (req, res) => {
 		try {
 			const sharedBlobSvc = azure.createBlobServiceWithSas(req.user.tokens.data.container.containerUri, req.user.tokens.data.container.sasKey)
@@ -36,7 +37,18 @@ module.exports = (app, config) => {
 				if(error) {
 					res.status(error.statusCode).send({ message: error.message })
 				} else{
-					const parsedBlobs = parseBlobs(result.entries)
+					const parsedBlobs = result.entries.map(blob => {
+						const {containerUri, containerName, sasKey} = req.user.tokens.data.container
+						return {
+							name: blob.name,
+							blobType: blob.blobType,
+							lastModified: blob.lastModified,
+							creationTime: blob.creationTime,
+							contentType: blob.contentSettings.contentType,
+							url: `${containerUri}/${containerName}/${blob.name}${sasKey}`				
+						}	
+					})
+					
 					res.send(parsedBlobs)
 				}
 			})
@@ -45,45 +57,7 @@ module.exports = (app, config) => {
 		}
 	}))
 
-	app.get("/_api/container/blobproperties", notAuthMiddleware, checkContainerMiddleware(config), promiseRouteHandler( async (req, res) => {
-		try {
-			const { sasKey, containerUri, containerName } = req.user.tokens.data.container
-			const sharedBlobSvc = await azure.createBlobServiceWithSas(containerUri, sasKey)
-			sharedBlobSvc.getBlobProperties(
-				containerName,
-				req.headers.blobname,
-				(error, result) => {
-					if(error) {
-						res.status(error.statusCode).send([{ name: req.headers.blobname, errorMessage: error.message }])
-					} else {
-						const parsedBlob = parseBlobs([result])
-						res.send(parsedBlob)
-					}
-				}
-			) 
-		} catch(error) {
-			res.status(error.statusCode).send({message: error.message})
-		}
-	}))
-
-	app.get("/_api/container/blobcontent", notAuthMiddleware, checkContainerMiddleware(config), promiseRouteHandler( async (req, res) => {
-		try {
-			const { sasKey, containerUri, containerName } = req.user.tokens.data.container
-			const sharedBlobSvc = await azure.createBlobServiceWithSas(containerUri, sasKey)
-			sharedBlobSvc.getBlobToText(containerName, req.headers.blobname, (error, blobContent, blob) => {
-				if(error) {
-					res.status(error.statusCode).send({ blobName: req.headers.blobname, errorMessage: error.message })
-				} else {
-					res.send(blobContent)
-				}
-			})
-		} catch(error) {
-			res.status(error.statusCode).send({ message: error.message })
-		}
-	}))
-
-
-	// Create a new blob for a given container
+	
 	app.get("/_api/container/createblob", notAuthMiddleware, promiseRouteHandler( async (req, res) => {
 		try {
 			const { sasKey, containerUri, containerName } = req.user.tokens.data.container
@@ -112,24 +86,6 @@ module.exports = (app, config) => {
 			const { sasKey, containerUri, containerName } = req.user.tokens.data.container
 			const sharedBlobSvc = await azure.createBlobServiceWithSas(containerUri, sasKey)
 			sharedBlobSvc.deleteBlob(containerName, req.headers.blobname, (error, result) => {
-				if(error) {
-					res.status(error.statusCode).send({ message: error.message })
-				} else {
-					res.send(result)
-				}
-			})
-		} catch(error) {
-			res.status(error.statusCode).send({ message: error.message })
-		}
-	}))
-
-
-	app.post("/_api/container/appendtoblob", notAuthMiddleware, promiseRouteHandler( async (req, res, next) => {
-		try {
-			const { sasKey, containerUri, containerName } = req.user.tokens.data.container
-			const sharedBlobSvc = await azure.createBlobServiceWithSas(containerUri, sasKey)
-			const { blobname, text } = req.headers
-			sharedBlobSvc.appendFromText(containerName, blobname, `\n${text}`, (error, result) => {
 				if(error) {
 					res.status(error.statusCode).send({ message: error.message })
 				} else {

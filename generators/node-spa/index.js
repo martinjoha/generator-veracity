@@ -94,7 +94,7 @@ It is adviced to go through the documentation before starting the application.
 					this.destinationPath("./client/src/ducks/index.js")
 				)
 				this.fs.copy(
-					this.templatePath("./client/src/features/Header/HeaderWithoutContainer.js"),
+					this.templatePath("./client/src/features/Header/HeaderWithoutDataFabric.js"),
 					this.destinationPath("./client/src/features/Header/Header.js")
 				)
 				this.fs.copy(

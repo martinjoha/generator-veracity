@@ -3,9 +3,9 @@ import React, { Component } from "react"
 import PropTypes from "prop-types"
 import { Link } from "react-router-dom"
 
-import classes from "./ContainerBlobs.scss"
+import classes from "./ContainerContent.scss"
 
-class ContainerBlobs extends Component {
+class ContainerContent extends Component {
 	
 	state = {
 		newBlobName: "",
@@ -41,9 +41,9 @@ class ContainerBlobs extends Component {
 		this.props.blobs.map(blob => {
 			return(
 				<div className={classes.blob} key={blob.name}>
-					<Link to={`/containers/${this.props.match.params.id}/blob/${blob.name}`}>
+					<a href={blob.url} target="_blank" rel="noopener noreferrer">
 						<h3 key={blob.name}>Blob name: {blob.name}</h3>
-					</Link>
+					</a>
 					<div>
 						<button id={blob.name} onClick={e => this.deleteBlob(e.target.id)}>Delete blob</button>
 					</div>
@@ -87,26 +87,22 @@ class ContainerBlobs extends Component {
 				{this.props.blobs.length > 0 ? 
 					this.renderBlobs() : <h3>There are no blobs in this container</h3>}
 				{this.renderCreateForm()}
-
-
-
 			</div>
 		)
 	}
 }
 
-ContainerBlobs.propTypes = {
+ContainerContent.propTypes = {
 	blobs: PropTypes.array,
 	blobCreated: PropTypes.bool,
 	blobDeleted: PropTypes.bool,
 	containerId: PropTypes.string,
 	errorMessage: PropTypes.string,
 	blobsFetched: PropTypes.bool,
-	match: PropTypes.object,
 
 	fetchContent: PropTypes.func,
 	createBlob: PropTypes.func,
 	deleteBlob: PropTypes.func,
 }
 
-export default ContainerBlobs
+export default ContainerContent

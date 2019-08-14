@@ -5,8 +5,7 @@ import Home from "../features/Home"
 import User from "../features/User"
 import NotFound from "../features/NotFound"
 import Containers from "../features/Containers"
-import Blob from "../features/Containers/Blob"
-import ContainerBlobs from "../features/Containers/ContainerBlobs"
+import ContainerContent from "../features/Containers/ContainerContent"
 
 
 
@@ -32,9 +31,8 @@ export const Routes = (props) => (
 		<Route path="/" exact component={Home}/>
 		<Route path="/user" exact component={User}/>
 		<Route path="/logout" exact component={Home}/>
-		<ProtectedRoute path="/containers/:id" exact component={ContainerBlobs} isAuth={props.isAuth}/>
+		<ProtectedRoute path="/containers/:id" exact component={ContainerContent} isAuth={props.isAuth}/>
 		<ProtectedRoute path="/containers" exact component={Containers}  isAuth={props.isAuth}/>
-		<ProtectedRoute path="/containers/:id/blob/:blobName" exact component={Blob} isAuth={props.isAuth} />
 		<Route component={NotFound}/>
 	</Switch>
 )

@@ -1,9 +1,6 @@
 # Veracity Single-Page-Application
 Welcome to your generated Single-Page application. This is your starting point for building an app that integrates with Veracity. The application will authenticate the user as well as giving access to the different containers the user has access to. The user can also "enter" a container and add, delete and update content, as well as viewing content details. The project consists of a `client` and `server`. 
 
-# Disclaimer
-
-If you decide to run this generator with data fabric, this demo only work with plain text and image blob types. If you have other types, you have to change the content in ```./client/src/features/Containers/Blobs```
 
 ## **BEFORE YOU BEGIN**
 Before you start any kind of development here or connect it to your code repository you should avoid committing files that are not needed. For GIT you do this by creating a file `.gitignore` in the root folder of your project. It should contain at least the following:
@@ -38,10 +35,6 @@ npm run build
 ```
 
 in the `client` and `server` folders respectively. The final application will outputted to the `dist` folder.
-
-## Disclaimer
-
-This is only a demo to show how to connect your Node application to authenticate a user and connect the user to data fabric. The application does not support all file formats for the blobs, so it is adviced to create a new container for this application to be able to read all the files.
 
 ## Overview
 
