@@ -21,7 +21,6 @@ module.exports = (app, config) => {
 					"Authorization": "Bearer " + req.user.tokens.data.access_token
 				}
 			})
-			// Need to parse the data to store the container properties in the user object
 			const data = await JSON.parse(response)
 			res.send(data)
 		} catch(error) {
