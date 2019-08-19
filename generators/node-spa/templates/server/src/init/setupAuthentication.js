@@ -84,7 +84,7 @@ module.exports = (app, authConfig, log) => {
 		saveUninitialized: false, // Only save sessions if they are actually initialized (i.e.: only save if the user is actually authenticated)
 		cookie: {
 			secure: true, // Set the https flag on the session cookie ensuring that it can only be sent over a secure (HTTPS) connection
-			httpOnly: true // Set the httpOnly flag to ensure that the session id will not be accessible to client-side scripts
+			httpOnly: true
 		},
 		// store: // TODO: Setup proper session storage (https://github.com/expressjs/session#compatible-session-stores)
 	}))
@@ -115,7 +115,7 @@ module.exports = (app, authConfig, log) => {
 	})
 	// This route is where we retrieve the authentication information posted back from Azure B2C/ADFS.
 	// To perform the necessary steps it needs to parse post data as well as sign in correctly. This is done using the body-parser middleware.
-	app.post("/auth/oidc/loginreturn", bodyParser.urlencoded({ extended: true }), authenticator, (req, res) => {
+	app.post("/signin-oidc", bodyParser.urlencoded({ extended: true }), authenticator, (req, res) => {
 		res.redirect("/")
 	})
 	// Our logout route handles logging out of B2C and removing session information.

@@ -1,5 +1,8 @@
 const express = require("express")
 const path = require("path")
+const fs = require("fs")
+const cheerio = require("cheerio")
+
 
 module.exports = (app, staticPath, log) => {
 	log.debug(`Serving static files from ${staticPath}`)
@@ -9,6 +12,15 @@ module.exports = (app, staticPath, log) => {
 
 	// This handler serves the default index.html file for all non-handled routes so that the client can handle them instead.
 	app.use("/*", (req, res) => {
-		res.sendFile(path.resolve(staticPath, "./index.html"))
+		const html = fs.readFileSync(path.resolve(staticPath, "./index.html"))
+		const $ = cheerio.load(html)
+		const initState = JSON.stringify({
+			user: {
+				authenticated: !!req.user
+			}
+		})
+		const script = `<script id="initialState" type="text/plain">${initState}</script>`
+		$("head").append(script)
+		res.send($.html())
 	})
 }
