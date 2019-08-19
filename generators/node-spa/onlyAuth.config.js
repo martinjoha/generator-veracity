@@ -1,0 +1,20 @@
+module.exports = [
+	"**/Containers/**", 
+	"**/containers.duck.js", 
+	"**/blobs.duck.js",
+	"**/blobs.editors.duck.js", 
+	"**/dataFabric/**", 
+	"**/ducks.index.js", 
+	"**/reducerWithOnlyAuth.js", 
+	"**/Header.js", 
+	"**/HeaderWithoutDataFabric.js",
+	"**/startWithoutDataFabric.js",
+	"**/start.js",
+	"**/routesWithoutDataFabric.js",
+	"**/routes.js",
+	"**/client/src/utils/**",
+	"**/checkContainerMiddleware.js",
+	"**/routes.connector.js",
+	"**/routes/index.js",
+	"**/routes/indexWithoutDataFabric.js"
+]
