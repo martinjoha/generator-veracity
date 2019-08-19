@@ -1,9 +1,6 @@
 import { combineReducers } from "redux"
 
 import * as user from "./user.duck"
-import * as blobs from "./blobs.duck"
-import * as blobActions from "./blobs.editors.duck"
-import * as containers from "./containers.duck"
 
 /**
  * This object should contain the default exports from all ducks in our system.
@@ -11,10 +8,7 @@ import * as containers from "./containers.duck"
  * Add new ducks to this object when they are implemented.
  */
 export const ducks = {
-	user,
-	blobs,
-	blobActions,
-	containers
+        user
 }
 
 /**
@@ -22,10 +16,10 @@ export const ducks = {
  * Provided the ducks follow the "duck"-pattern this code should not need to be changed.
  */
 export const rootReducer = () => {
-	const reducers = Object.keys(ducks).reduce((acc, key) => {
-		acc[key] = ducks[key].reducer
-		return acc
-	}, {})
-	return combineReducers(reducers)
+        const reducers = Object.keys(ducks).reduce((acc, key) => {
+                acc[key] = ducks[key].reducer
+                return acc
+        }, {})
+        return combineReducers(reducers)
 }
 export default rootReducer
