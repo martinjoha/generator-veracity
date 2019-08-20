@@ -2,7 +2,6 @@ import { combineReducers } from "redux"
 
 import * as user from "./user.duck"
 import * as blobs from "./blobs.duck"
-import * as blobActions from "./blobs.editors.duck"
 import * as containers from "./containers.duck"
 
 /**
@@ -13,7 +12,6 @@ import * as containers from "./containers.duck"
 export const ducks = {
 	user,
 	blobs,
-	blobActions,
 	containers
 }
 

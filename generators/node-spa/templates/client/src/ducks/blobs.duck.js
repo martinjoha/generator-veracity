@@ -1,5 +1,7 @@
 import { createAction as createReduxAction, handleActions } from "redux-actions"
 import axios from "axios"
+import { createAppendText } from "../utils/parseText"
+
 
 const _ns = "@blob/"
 export const getState = globalState => globalState.blobs || {}
@@ -37,6 +39,44 @@ export const fetchBlobs = (containerId) => async (dispatch, getState) => {
 	}
 }
 
+export const setContainerChanged = createAction("CONTAINER_CHANGED", (flag = true) => flag)
+export const getContainerChanged = state => getState(state).containerChanged || false
+
+export const deleteBlob = (containerId, blobName) => async dispatch => {
+	dispatch(setContainerChanged(false))
+	try {
+		await axios({
+			url: "/_api/container/deleteblob",
+			headers: {
+				id: containerId,
+				blobName,
+			}
+		})
+		dispatch((setContainerChanged()))
+	} catch (error) {
+		dispatch(setErrorMessage({containerId, message:error.response.data.message}))
+	}
+}
+
+export const createBlob = (containerId, blobName, blobText, contentType) => async (dispatch) => {
+	const parsedText = createAppendText(blobText)
+	dispatch(setContainerChanged(false))
+	try {
+		await axios({
+			url: "/_api/container/createblob",
+			headers: {
+				id: containerId,
+				blobName,
+				blobText: parsedText,
+				contentType
+			}
+		})
+		dispatch(setContainerChanged()) 
+	} catch(error) {
+		dispatch(setErrorMessage({containerId, message:error.response.data.message}))
+	}
+}
+
 export const reducer = handleActions({
 	[setBlobs]: (state, { payload }) => ({
 		...state,
@@ -45,6 +85,7 @@ export const reducer = handleActions({
 			files: payload.data
 		},
 		loading: false,
+		containerChanged: false
 	}),
 	[setLoading]: ((state, { payload }) => ({
 		...state,
@@ -57,6 +98,10 @@ export const reducer = handleActions({
 			errorMessage: payload.message
 		}
 	}),
+	[setContainerChanged]: (state, { payload }) => ({
+		...state,
+		containerChanged: payload
+	})
 }, {})
 
 export default reducer

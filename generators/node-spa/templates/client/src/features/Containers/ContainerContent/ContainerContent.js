@@ -10,23 +10,19 @@ const ContainerContent = (props) => {
 	const [newBlobText, setNewBlobText] = useState("")
 
 	useEffect(() => {
-		if(!props.containerFetched) {
+		if(!props.containerFetched || props.containerChanged) {
 			props.fetchContent()
 		}
-	}, [props.containerId])
+	}, [props.containerChanged])
 
-	const createBlob = async () => {
-  	if(await props.createBlob(newBlobName, newBlobText, "text/plain")) {
-  		props.fetchContent()
-			setNewBlobName("")
-			setNewBlobText("")
-  	} 
+	const createBlob = () => {
+		props.createBlob(newBlobName, newBlobText, "text/plain")
+		setNewBlobName("")
+		setNewBlobText("")
 	}
 	
 	const deleteBlob = async (blobName) => {
-		if(await props.deleteBlob(blobName)) {
-			props.fetchContent()
-		}
+		props.deleteBlob(blobName)
 	}
 
 	const renderFiles = () => (
@@ -79,9 +75,9 @@ const ContainerContent = (props) => {
 ContainerContent.propTypes = {
 	files: PropTypes.array,
 	loading: PropTypes.bool,
-	containerId: PropTypes.string,
 	errorMessage: PropTypes.string,
 	containerFetched: PropTypes.bool,
+	containerChanged: PropTypes.bool,
 
 	fetchContent: PropTypes.func,
 	createBlob: PropTypes.func,
