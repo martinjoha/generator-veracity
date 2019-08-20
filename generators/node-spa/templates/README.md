@@ -130,7 +130,8 @@ The user can now communicate directly with Azure storage, and upload and downloa
 
 A user's containers in Azure storage contain storage blobs, which are unstructured data files. They can be text files, csv files, images etc.
 
-To be able to communicate with Azure Storage, a user needs the SAS-token and the Host URL for the specific storage. The Host URL can be found in the sasUri value obtained after the last API call to the Data Fabric API. The Host URL is the part of the URI before `/{containerName}`.
+To be able to communicate with Azure Storage, a user needs the SAS-token and the Host URL for the specific storage. In order to get the host URL you need to parse the sasUri parameter in the last endpoint. This parameter us a string and has the following structure:
+```{hostUri}/{containerName}```
 
 To get access to Azure Storage a user needs to create a blob service:
 
@@ -140,57 +141,5 @@ const sharedBlobSvc = azure.createBlobServiceWithSas(hostUrl, sasToken)
 ```
 
 The user can now access the different blobs in the specific container.
-
-List blobs in storage: 
-
-```javascript
-shraredBlobSvc.listBlobsSegmented(containerName, null, (error, result) => {
-	if(error){
-		console.log("Couldn't list blobs")
-		console.log(error)
-	} else {
-		console.log(`Successfully listed blobs for container ${containerName}`)
-		console.log(result.entries)
-	}
-})
-```
-
-Get blob to text:
-
-```javascript
-sharedBlobSvc.getBlobToText(containerName, blobName, (error, blobContent, blob) => {
-	if(error) {
-		console.log("Couldn't download blob")
-		console.log(error)
-	} else {
-		console.log(`Successfully downloaded blob ${blobName}`)
-		console.log(blobContent)
-	}
-})
-```
-
-Upload a text blob:
-
-```javascript
-sharedBlobSvc.createAppendBlobFromText(containerName, blobName, text, (error, result) => {
-	if(error) {
-		console.log("Couldn't upload blob.")
-	} else {
-		// blob created.
-	}
-})
-```
-
-Delete a blob:
-
-```javascript
-sharedBlobSvc.deleteBlob(containerName, blobName, (error, result) => {
-	if(error) {
-		console.log("Couldn't delete blob.")
-	} else {
-		// blob deleted.
-	}
-})
-```
 
 All the provided Azure Blob Service methods are available [here](https://azure.github.io/azure-storage-node/BlobService.html)
