@@ -32,7 +32,7 @@ const start = async () => {
 		app.set("etag", false) // Disable etags to prevent overzealous caching
 
 
-		await setupAuthentication(app, config.auth, log)
+		await setupAuthentication(app)
 
 		setupUserApis(app, config.auth)
 		// Do this last as it adds a generic route handler

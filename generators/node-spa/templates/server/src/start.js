@@ -32,7 +32,7 @@ const start = async () => {
 		app.set("etag", false) // Disable etags to prevent overzealous caching
 
 
-		await setupAuthentication(app, config.auth, log)
+		await setupAuthentication(app)
 
 		setupUserApis(app, config.auth)
 		setupDataFabricApi(app, config.auth)
@@ -40,6 +40,9 @@ const start = async () => {
 		setupRoutes(app, config.server.staticRoot, log)
 
 		await setupServer(app, log, config.server)
+		app.use((err, req, res, next) => {
+			res.status(err.statusCode).send({message: err.message})
+		})
 	}
 	startAsync().catch(error => {
 		log.error(parseError(error))

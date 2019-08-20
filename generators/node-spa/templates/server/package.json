@@ -10,7 +10,10 @@
   "author": "DNV GL",
   "license": "ISC",
   "dependencies": {
+    "@veracity/node-auth": "0.1.0-beta",
+    "azure-storage": "^2.10.3",
     "body-parser": "^1.19.0",
+    "cheerio": "^1.0.0-rc.3",
     "express": "^4.16.4",
     "express-session": "^1.16.1",
     "node-forge": "^0.8.2",

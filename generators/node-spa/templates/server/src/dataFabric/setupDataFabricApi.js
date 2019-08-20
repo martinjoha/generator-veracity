@@ -6,6 +6,9 @@ const notAuthMiddleware = require("../utils/notAuthMiddleware")
 const checkContainerMiddleware = require("../utils/checkContainerMiddleware")
 const promiseRouteHandler = require("../utils/promiseRouteHandler")
 
+const { dataFabric } = require("../config/scopes")
+
+
 module.exports = (app, config) => {
   
   
@@ -17,49 +20,45 @@ module.exports = (app, config) => {
 				method: "GET",
 				headers: {
 					"Ocp-Apim-Subscription-Key": config.apiKeys.dataFabricApi,
-					"Authorization": "Bearer " + req.user.tokens.data.access_token
+					"Authorization": "Bearer " + req.user.apiTokens[dataFabric].accessToken
 				}
 			})
 			const data = await JSON.parse(response)
 			res.send(data)
 		} catch(error) {
-			res.status(error.statusCode).send({ message: error.message })
+			next(error)
 		}
 	}))
-
-
 	
-	app.get("/_api/container/listblobs", notAuthMiddleware, checkContainerMiddleware(config), promiseRouteHandler( async (req, res) => {
+	app.get("/_api/container/listblobs", notAuthMiddleware, checkContainerMiddleware(config), promiseRouteHandler( async (req, res, next) => {
 		try {
-			const sharedBlobSvc = azure.createBlobServiceWithSas(req.user.tokens.data.container.containerUri, req.user.tokens.data.container.sasKey)
-			sharedBlobSvc.listBlobsSegmented(req.user.tokens.data.container.containerName, null, (error, result) => {
+			const sharedBlobSvc = await azure.createBlobServiceWithSas(req.user.container.containerUri, req.user.container.sasKey)
+			sharedBlobSvc.listBlobsSegmented(req.user.container.containerName, null, (error, result) => {
 				if(error) {
-					res.status(error.statusCode).send({ message: error.message })
+					next(error)
 				} else{
-					const parsedBlobs = result.entries.map(blob => {
-						const {containerUri, containerName, sasKey} = req.user.tokens.data.container
-						return {
-							name: blob.name,
-							blobType: blob.blobType,
-							lastModified: blob.lastModified,
-							creationTime: blob.creationTime,
-							contentType: blob.contentSettings.contentType,
-							url: `${containerUri}/${containerName}/${blob.name}${sasKey}`				
-						}	
-					})
-					
+					const {containerUri, containerName, sasKey} = req.user.container
+					const parsedBlobs = result.entries.map(blob => ({
+						name: blob.name,
+						blobType: blob.blobType,
+						lastModified: blob.lastModified,
+						creationTime: blob.creationTime,
+						contentType: blob.contentSettings.contentType,
+						url: `${containerUri}/${containerName}/${blob.name}${sasKey}`				
+					}))
 					res.send(parsedBlobs)
 				}
 			})
 		} catch(error) {
-			res.status(error.statusCode).send({ message: error.message })
+			next(error)
+			//res.status(error.statusCode).send({ message: error.message })
 		}
 	}))
 
 	
 	app.get("/_api/container/createblob", notAuthMiddleware, checkContainerMiddleware(config), promiseRouteHandler( async (req, res) => {
 		try {
-			const { sasKey, containerUri, containerName } = req.user.tokens.data.container
+			const { sasKey, containerUri, containerName } = req.user.container
 			const sharedBlobSvc = await azure.createBlobServiceWithSas(containerUri, sasKey)
 			sharedBlobSvc.createAppendBlobFromText(
 				containerName,
@@ -68,31 +67,31 @@ module.exports = (app, config) => {
 				{ contentSettings: { contentType: req.headers. contenttype }},
 				(error, result) => {
 					if(error) {
-						res.status(error.statusCode).send({ message: error.message })
+						next(error)
 					} else {
 						res.send(result)
 					}
 				}
 			) 
 		} catch(error) {
-			res.status(error.statusCode).send({ message: error.message })
+			next(error)
 		}
 	}))
 
 
 	app.get("/_api/container/deleteblob", notAuthMiddleware, checkContainerMiddleware(config), promiseRouteHandler( async (req, res) => {
 		try {
-			const { sasKey, containerUri, containerName } = req.user.tokens.data.container
+			const { sasKey, containerUri, containerName } = req.user.container
 			const sharedBlobSvc = await azure.createBlobServiceWithSas(containerUri, sasKey)
 			sharedBlobSvc.deleteBlob(containerName, req.headers.blobname, (error, result) => {
 				if(error) {
-					res.status(error.statusCode).send({ message: error.message })
+					next(error)
 				} else {
 					res.send(result)
 				}
 			})
 		} catch(error) {
-			res.status(error.statusCode).send({ message: error.message })
+			next(error)
 		}
 	}))
 
