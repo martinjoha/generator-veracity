@@ -19,7 +19,7 @@ ${chalk.cyan(" Single-Page-Application")}
 `- React/Redux front-end
 - Client side routing
 - Express powered backend
-- Authentication with passport and passport-azure-ad
+- Authentication with passport and @veracity/node-auth
 - Routes for logging in and logging out
 - Development environment optimized for VisualStudio Code
 `)
@@ -43,19 +43,19 @@ It is adviced to go through the documentation before starting the application.
 				type: "input",
 				name: "clientId",
 				message: "Type in your client Id if you have obtained one in the encrypted email",
-				default: "[client id goes here]"
+				default: ""
 			},
 			{
 				type: "input",
 				name: "clientSecret",
 				message: "Type in your client Secret if you have obtained one in the encrypted email",
-				default: "[ client secret goes here ]"
+				default: ""
 			},
 			{
 				type: "input",
 				name: "servicesApiKey",
 				message: "Type Ocp-Apim-Subscription-Key if you have obtained one in the encrypted email",
-				defualt: "[ Ocp-Apim-Subscription-Key goes here ]"
+				defualt: ""
 			},
 			{
 				type: "confirm",
