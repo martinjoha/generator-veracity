@@ -19,7 +19,7 @@ ${chalk.cyan(" Single-Page-Application")}
 `- React/Redux front-end
 - Client side routing
 - Express powered backend
-- Authentication with passport and passport-azure-ad
+- Authentication with passport and @veracity/node-auth
 - Routes for logging in and logging out
 - Development environment optimized for VisualStudio Code
 `)
@@ -44,19 +44,19 @@ It is adviced to go through the documentation before starting the application.
 				type: "input",
 				name: "clientId",
 				message: "Please enter the client id you received when creating the application in developer.veracity.com or hit enter to add it later",
-				default: "[client id goes here]"
+				default: ""
 			},
 			{
 				type: "input",
 				name: "clientSecret",
 				message: "Please enter the client secret you received when creating the application in developer.veracity.com or hit enter to add it later",
-				default: "[ client secret goes here ]"
+				default: ""
 			},
 			{
 				type: "input",
 				name: "servicesApiKey",
 				message: "Type Ocp-Apim-Subscription-Key if you have obtained one in the encrypted email",
-				default: "[ Ocp-Apim-Subscription-Key goes here ]"
+				default: ""
 			},
 			{
 				type: "confirm",
