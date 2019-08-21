@@ -1,55 +1,25 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
-import React, { useState, useEffect } from "react"
+import React, { useEffect } from "react"
 import PropTypes from "prop-types"
 import { Link } from "react-router-dom"
+import BlobItem from "./BlobItem"
+import AddBlobItem from "./AddBlobItem"
 
 import classes from "./ContainerContent.scss"
 
 const ContainerContent = (props) => {
-	const [newBlobName, setNewBlobName] = useState("")
-	const [newBlobText, setNewBlobText] = useState("")
-
 	useEffect(() => {
-		if(!props.containerFetched || props.containerChanged) {
+		if(!props.containerFetched) {
 			props.fetchContent()
 		}
-	}, [props.containerChanged])
-
-	const createBlob = () => {
-		props.createBlob(newBlobName, newBlobText, "text/plain")
-		setNewBlobName("")
-		setNewBlobText("")
-	}
-	
-	const deleteBlob = async (blobName) => {
-		props.deleteBlob(blobName)
-	}
+	}, [])
 
 	const renderFiles = () => (
-		props.files.map(blob => {
-			return(
-				<div className={classes.blob} key={blob.name}>
-					<a href={blob.url} target="_blank" rel="noopener noreferrer">
-						<h3 key={blob.name}>Blob name: {blob.name}</h3>
-					</a>
-					<div>
-						<button id={blob.name} onClick={e => deleteBlob(e.target.id)}>Delete blob</button>
-					</div>
-				</div>
-			)
-		})
+		props.files.map(blob => (
+			<BlobItem key={blob.name} containerId={props.match.params.id} blob={blob} />			
+		))
 	)
-	const renderCreateForm = () => {
-		return(
-			<div className={classes.form}>
-				<form>
-					<input type="text" placeholder="Name of your new blob" onChange={(e) => setNewBlobName(e.target.value)} value={newBlobName} />
-					<input type="text" placeholder="Enter some text" onChange={e => setNewBlobText(e.target.value)} value={newBlobText} />
-				</form>
-				<button onClick={createBlob}>Create Blob</button>
-			</div>
-		)
-	}
+
 	if(props.errorMessage) {
 		return (
 			<div className={classes.container}>
@@ -65,7 +35,7 @@ const ContainerContent = (props) => {
 					<Link to="/containers">Back to containers</Link>
 					{props.files.length > 0 || !props.containerFetched ? 
 						renderFiles() : <h3>There are no blobs in this container</h3>}
-					{renderCreateForm()}
+					<AddBlobItem containerId={props.match.params.id} />
 				</div>
 			}
 		</div>
@@ -77,11 +47,9 @@ ContainerContent.propTypes = {
 	loading: PropTypes.bool,
 	errorMessage: PropTypes.string,
 	containerFetched: PropTypes.bool,
-	containerChanged: PropTypes.bool,
+	match: PropTypes.object,
 
 	fetchContent: PropTypes.func,
-	createBlob: PropTypes.func,
-	deleteBlob: PropTypes.func,
 }
 
 export default ContainerContent

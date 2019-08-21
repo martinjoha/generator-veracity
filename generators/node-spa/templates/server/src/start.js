@@ -32,7 +32,7 @@ const start = async () => {
 		app.set("etag", false) // Disable etags to prevent overzealous caching
 
 
-		await setupAuthentication(app)
+		await setupAuthentication(app, config.auth)
 
 		setupUserApis(app, config.auth)
 		setupDataFabricApi(app, config.auth)

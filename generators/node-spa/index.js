@@ -3,6 +3,7 @@ const say = require("yosay")
 const chalk = require("chalk")
 const onlyAuthConfig = require("./onlyAuth.config")
 const withDataFabricConfig = require("./withDataFabric.config")
+const uuid = require("uuid")
 
 module.exports = class extends Generator {
 	constructor(args, opts) {
@@ -73,7 +74,8 @@ It is adviced to go through the documentation before starting the application.
 				this.templatePath("./**"),
 				this.destinationPath("./"),
 				{
-					...this.answers
+					...this.answers,
+					secret: uuid()
 				},
 				null,
 				{globOptions: {dot: true, ignore: withDataFabricConfig}}
@@ -85,7 +87,8 @@ It is adviced to go through the documentation before starting the application.
 				this.templatePath("./**"),
 				this.destinationPath("./"),
 				{ 
-					...this.answers
+					...this.answers,
+					secret: uuid()
 				},
 				null,
 				{globOptions: {dot: true, ignore: onlyAuthConfig}}
@@ -104,7 +107,7 @@ It is adviced to go through the documentation before starting the application.
 				)
 				this.fs.copy(
 					this.templatePath("./server/src/startWithoutDataFabric.js"),
-					this.destinationPath("./server/src/start.js")
+					this.destinationPath("./server/src/start.js"),
 				)
 				this.fs.copy(
 					this.templatePath("./client/src/routes/indexWithoutDataFabric.js"),

@@ -39,11 +39,16 @@ export const fetchBlobs = (containerId) => async (dispatch, getState) => {
 	}
 }
 
-export const setContainerChanged = createAction("CONTAINER_CHANGED", (flag = true) => flag)
-export const getContainerChanged = state => getState(state).containerChanged || false
+export const setDeleteErrorMessage = createAction("SET_DELETE_ERROR_MESSAGE")
+export const setIsDeleting = createAction("DELETING_BLOB")
+export const isDeleting = (state, containerId, blobName) => (
+	!!getBlobsForContainer(state, containerId).filter(blob => blob.name === blobName)[0].isDeleting
+)
 
-export const deleteBlob = (containerId, blobName) => async dispatch => {
-	dispatch(setContainerChanged(false))
+
+export const deleteBlob = (containerId, blobName) => async (dispatch, getState) => {
+	const state = getState(state)
+	dispatch(setIsDeleting({ containerId, blobName }))
 	try {
 		await axios({
 			url: "/_api/container/deleteblob",
@@ -52,16 +57,22 @@ export const deleteBlob = (containerId, blobName) => async dispatch => {
 				blobName,
 			}
 		})
-		dispatch((setContainerChanged()))
+		dispatch(setBlobs({ 
+			containerId, 
+			data: getBlobsForContainer(state, containerId).filter(blob => blob.name !== blobName) 
+		}))
 	} catch (error) {
-		dispatch(setErrorMessage({containerId, message:error.response.data.message}))
+		return dispatch(setErrorMessage(error.response.data.message))
 	}
 }
 
+
+export const setCreatingBlob = createAction("CREATING_BLOB")
+export const isCreatingBlob = (state, containerId) => !!getState(state)[containerId].isCreatingBlob 
 export const createBlob = (containerId, blobName, blobText, contentType) => async (dispatch) => {
 	const parsedText = createAppendText(blobText)
-	dispatch(setContainerChanged(false))
 	try {
+		dispatch(setCreatingBlob({ containerId, isCreatingBlob: true }))
 		await axios({
 			url: "/_api/container/createblob",
 			headers: {
@@ -71,10 +82,25 @@ export const createBlob = (containerId, blobName, blobText, contentType) => asyn
 				contentType
 			}
 		})
-		dispatch(setContainerChanged()) 
+		dispatch(setCreatingBlob({ containerId, isCreatingBlob: false }))
+		dispatch(fetchBlobs(containerId))
 	} catch(error) {
-		dispatch(setErrorMessage({containerId, message:error.response.data.message}))
+		return dispatch(setErrorMessage(error.response.data.message))
 	}
+}
+
+//Helper function to add some state to the file object
+const updateBlobArray = (localState, containerId, blobName, key, value) => {
+	return (
+		localState[containerId].files.map(blob => {
+			if(blob.name === blobName) {
+				return {
+					...blob,
+					[key]: value 
+				}
+			} else return blob
+		})	
+	)
 }
 
 export const reducer = handleActions({
@@ -85,7 +111,6 @@ export const reducer = handleActions({
 			files: payload.data
 		},
 		loading: false,
-		containerChanged: false
 	}),
 	[setLoading]: ((state, { payload }) => ({
 		...state,
@@ -94,13 +119,30 @@ export const reducer = handleActions({
 	[setErrorMessage]: (state, { payload }) => ({
 		...state,
 		[payload.containerId]: {
-			...state.containerId,
+			...state[payload.containerId],
 			errorMessage: payload.message
 		}
 	}),
-	[setContainerChanged]: (state, { payload }) => ({
+	[setIsDeleting]: (state, { payload }) => ({
 		...state,
-		containerChanged: payload
+		[payload.containerId]: {
+			...state[payload.containerId],
+			files: updateBlobArray(state, payload.containerId, payload.blobName, "isDeleting", true)
+		}
+	}),
+	[setDeleteErrorMessage]: (state, { payload }) => ({
+		...state,
+		[payload.containerId]: {
+			...state[payload.containerId],
+			file: updateBlobArray(state, payload.containerId, payload.blobName, "errorMessage", payload.isDeleting)
+		}
+	}),
+	[setCreatingBlob]: (state, { payload }) => ({
+		...state,
+		[payload.containerId]: {
+			...state[payload.containerId],
+			isCreatingBlob: payload.isCreatingBlob
+		}
 	})
 }, {})
 
